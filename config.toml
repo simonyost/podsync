@@ -31,6 +31,9 @@ ssl_enabled = false
 # Path to SSL key file
 #ssl_key = ""
 
+[tokens]
+youtube = ${ENV_VAR_NAME} # YouTube API Key. See https://developers.google.com/youtube/registering_an_application
+
 [feeds]
 [[feeds.feed1]]
 # URL of the original podcast feed
@@ -58,24 +61,11 @@ log_level = "info"
   cover_art_quality = "high"
   subcategories = ["Documentary", "Tech News"]
   lang = "en"
-  
   ownerName = "Simon Yost"
   ownerEmail = "simon@catchfire.show"
-
-# Podcast title
-title = "Catch Fire Show with Simon Yost" # change this to your desired podcast title
-
-# Podcast description
-description = "A podcast of my favorite YouTube playlist" # change this to your desired podcast description
-
-# Podcast author
-author = "Simon Yost (simon@catchfire.show)"
-
-# Podcast language (ISO 639-1 code)
-language = "en" # change this to your desired podcast language
-
-# Podcast category (Apple Podcasts category code)
-category = "TV & Film" # change this to your desired podcast category
-
-# Podcast explicit content flag (true or false)
-explicit = false
+  title = "Catch Fire Show with Simon Yost" # change this to your desired podcast title
+  description = "A podcast of my favorite YouTube playlist" # change this to your desired podcast description
+  author = "Simon Yost (simon@catchfire.show)"
+  language = "en" # change this to your desired podcast language
+  category = "TV & Film" # change this to your desired podcast category
+  explicit = false
