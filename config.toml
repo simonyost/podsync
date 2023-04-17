@@ -26,10 +26,10 @@ log_level = "info"
 ssl_enabled = false
 
 # Path to SSL certificate file
-ssl_cert = ""
+#ssl_cert = ""
 
 # Path to SSL key file
-ssl_key = ""
+#ssl_key = ""
 
 [feeds]
 [[feeds.feed1]]
