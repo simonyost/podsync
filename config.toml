@@ -1,118 +1,81 @@
-# This is an example of TOML configuration file for Podsync.
+# Config file for podsync
 
-# Web server related configuration.
 [server]
-# HTTP server port.
-port = 8080
-# Optional. If you want to hide Podsync behind reverse proxy like nginx, you can use hostname field.
-# Server will be accessible from http://localhost:8080, but episode links will point to https://my.test.host:4443/ID1/XYZ
-hostname = "https://my.test.host:4443"
-# Bind a specific IP addresses for server ,"*": bind all IP addresses which is default option, localhost or 127.0.0.1  bind a single IPv4 address
-bind_address = "172.20.10.2"
-# Specify path for reverse proxy and only [A-Za-z0-9]
-path = "test"
+# Address the server will bind to
+address = ":8080"
 
-# Configure where to store the episode data
-[storage]
-  # Could be "local" (default) for the local file system, or "s3" for a S3-compatible storage provider (e.g. AWS S3)
-  type = "local"
+# Directory where downloaded files will be saved
+download_dir = "/opt/build/repo/downloads" # change this to the Netlify build directory
 
-  [storage.local]
-  data_dir = "/app/data" # Don't change if you run podsync via docker
+# URL for the server, used to generate feed URLs
+base_url = "https://catchfirepodcast.netlify.app" # change this to your Netlify app URL
 
+# Number of episodes to include in each feed
+episode_limit = 10
 
-# API keys to be used to access Youtube and Vimeo.
-# These can be either specified as string parameter or array of string (so those will be rotated).
-[tokens]
-youtube = "AIzaSyCLvMqoG_tBZ18vwzs860eUXi6Ba8v7464" # YouTube API Key. See https://developers.google.com/youtube/registering_an_application
+# Number of days to look back when checking for new episodes
+lookback_days = 7
 
+# Enable or disable the server's logging
+log_enabled = true
 
-# The list of data sources to be hosted by Podsync.
-# These are channels, users, playlists, etc.
+# Level of server logging
+log_level = "info"
+
+# Set to true to serve files over HTTPS
+ssl_enabled = false
+
+# Path to SSL certificate file
+ssl_cert = ""
+
+# Path to SSL key file
+ssl_key = ""
+
 [feeds]
-  # Each channel must have a unique identifier (in this example "ID1").
-  [feeds.ID1]
-  # URL address of a channel, group, user, or playlist.
-  url = "https://www.youtube.com/playlist?list=PL77wUH3sO_auKlIMhoJKXvBB5sH7vXznX"
+[[feeds.feed1]]
+# URL of the original podcast feed
+url = "https://www.youtube.com/feeds/videos.xml?playlist_id=PL77wUH3sO_auKlIMhoJKXvBB5sH7vXznX" # change this to the YouTube playlist feed URL
 
-  # The number of episodes to query each update (keep in mind, that this might drain API token)
-  page_size = 50
+# Path to the new feed file (relative to download_dir)
+feed_file = "feed1.xml"
 
-  # How often query for updates, examples: "60m", "4h", "2h45m"
-  update_period = "1d"
+# Maximum number of episodes to download (-1 for unlimited)
+max_episodes = 2
 
-  quality = "high" # "high" or "low"
-  format = "audio" # "audio", "video" or "custom"
-  # When format = "custom"
-  # YouTubeDL format parameter and result file extension
-  custom_format = { youtube_dl_format = "bestaudio[ext=m4a]", extension = "m4a" }
+# Minimum interval between downloads (in hours)
+interval = 12
 
-  playlist_sort = "asc" # or "desc", which will fetch playlist items from the end
+# Enable or disable feed-specific logging
+log_enabled = true
 
-  # Optional maximal height of video, example: 720, 1080, 1440, 2160, ...
-  max_height = 720
+# Level of feed-specific logging
+log_level = "info"
 
-  # Optionally include this feed in OPML file (default value: false)
-  opml = true
-
-  # Optional cron expression format for more precise update schedule.
-  # If set then overwrite 'update_period'.
-  cron_schedule = "@every 12h"
-
-  # Whether to cleanup old episodes.
-  # Keep last 10 episodes (order desc by PubDate)
-  clean = { keep_last = 10 }
-
-  # Optional Golang regexp format.
-  # If set, then only download matching episodes.
-  # Duration filters are in seconds.
-  # max_age filter is in days.
-  filters = { title = "regex for title here", not_title = "regex for negative title match", description = "...", not_description = "...", min_duration = 0, max_duration = 86400, max_age = 365 }
-
-  # Optional extra arguments passed to youtube-dl when downloading videos from this feed.
-  # This example would embed available English closed captions in the videos.
-  # Note that setting '--audio-format' for audio format feeds, or '--format' or '--output' for any format may cause
-  # unexpected behaviour. You should only use this if you know what you are doing, and have read up on youtube-dl's options!
-  youtube_dl_args = ["--write-sub", "--embed-subs", "--sub-lang", "en,en-US,en-GB"]
-
-  # When set to true, podcasts indexers such as iTunes or Google Podcasts will not index this podcast
-  private_feed = true
-
-  # Optional feed customizations
+# Use the following fields to customize the feed's metadata
+# (see https://help.apple.com/itc/podcasts_connect/#/itc1723472cb for details)
   [feeds.ID1.custom]
-  title = "Level1News"
-  description = "News sections of Level1Techs, in a podcast feed!"
-  author = "Level1Tech"
   cover_art = "{IMAGE_URL}"
   cover_art_quality = "high"
-  category = "TV"
   subcategories = ["Documentary", "Tech News"]
-  explicit = true
   lang = "en"
-  author = "Mrs. Smith (mrs@smith.org)"
-  ownerName = "Mrs. Smith"
-  ownerEmail = "mrs@smith.org"
-  # optional: this will override the default link (usually the URL address) in the generated RSS feed with another link
-  link = "https://example.org"
+  
+  ownerName = "Simon Yost"
+  ownerEmail = "simon@catchfire.show"
 
-# Podsync uses local database to store feeds and episodes metadata.
-# This section is optional and usually not needed to configure unless some very specific corner cases.
-# Refer to https://dgraph.io/docs/badger/get-started/#memory-usage for documentation.
-[database]
-  badger = { truncate = true, file_io = true }
+# Podcast title
+title = "Catch Fire Show with Simon Yost" # change this to your desired podcast title
 
-# Youtube-dl specific configuration.
-[downloader]
-# Optional, auto update youtube-dl every 24 hours
-self_update = true
-# Download timeout in minutes.
-timeout = 15
+# Podcast description
+description = "A podcast of my favorite YouTube playlist" # change this to your desired podcast description
 
-# Optional log config. If not specified logs to the stdout
-[log]
-filename = "podsync.log"
-max_size = 50 # MB
-max_age = 30 # days
-max_backups = 7
-compress = true
-debug = false
+# Podcast author
+author = "Simon Yost (simon@catchfire.show)"
+
+# Podcast language (ISO 639-1 code)
+language = "en" # change this to your desired podcast language
+
+# Podcast category (Apple Podcasts category code)
+category = "TV & Film" # change this to your desired podcast category
+
+# Podcast explicit content flag (true or false)
+explicit = false

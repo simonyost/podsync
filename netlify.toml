@@ -1,0 +1,3 @@
+[build.environment]
+  POCSYNC_CONFIG = "$PODSYNC_CONFIG"
+  command = "podsync --config $PODSYNC_CONFIG"
